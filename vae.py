@@ -13,7 +13,7 @@ def sampling(args):
     epsilon = K.random_normal(shape=K.shape(z_mean))
     return z_mean + K.exp(0.5 * z_log_var) * epsilon
 
-latent_dim = 2
+latent_dim = 4
 input = Input(shape=(28, 28, 1))
 x = Conv2D(8, (3, 3), activation='relu', padding='same',name='enc/conv1')(input)
 x = MaxPooling2D((2, 2), padding='same')(x)
@@ -56,7 +56,7 @@ x_train =  np.expand_dims(x_train.astype('float32') / 255, axis=3)
 x_test = np.expand_dims(x_test.astype('float32') / 255, axis=3)
 
 vae.fit(x_train,
-                epochs=30,
+                epochs=50,
                 batch_size=256,
                 shuffle=True,
                 validation_data=(x_test, None),
@@ -65,7 +65,7 @@ vae.save_weights('tmp.tf')
 
 decoder.load_weights('tmp.tf')
 reconstructed_imgs = vae.predict(x_test)
-generated_imgs=decoder.predict(np.random.randn(10,2))
+generated_imgs=decoder.predict(np.random.randn(10,latent_dim))
 
 n = 10
 fig, axes = plt.subplots(3, n,figsize=(20, 4))
